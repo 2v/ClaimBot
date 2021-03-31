@@ -1,10 +1,17 @@
 **Proposed Features**
-> !channel_set: sets the current channel as claimable (first get the channel ID that the message was sent in and add it to DB)
-> !channel_unset: make the channel no longer claimable until set again
-> !channel_claim_time <time{hours.minutes.seconds}>: if the current channel is claimable, this will set the amount of time that the channel can be owned by a user
-> !claim: user claims channel unless it is already claimed by another user. Running this command again will only extend the timeline if the user enters it within 10 minutes of the expiration date. Otherwise the time until expiration will remain the same.
-> !unclaim: user unclaims channel if they are the current owner. Resets channel timer
-> !claim_status: lists the time until claim ends, who currently owns the channel, channel name, ID, etc
+
+- !channel_set: sets the current channel as claimable (first get the channel ID that the message was sent in and add it to DB)
+
+- !channel_unset: make the channel no longer claimable until set again
+
+- !channel_claim_time <time{hours.minutes.seconds}>: if the current channel is claimable, this will set the amount of time that the channel can be owned by a user
+
+- !claim: user claims channel unless it is already claimed by another user. Running this command again will only extend the timeline if the user enters it within 10 minutes of the expiration date. Otherwise the time until expiration will remain the same.
+
+- !unclaim: user unclaims channel if they are the current owner. Resets channel timer
+
+- !claim_status: lists the time until claim ends, who currently owns the channel, channel name, ID, etc
+
 
 Copyright (C) 2020 **Thomas Buckley**
 

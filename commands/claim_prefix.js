@@ -1,7 +1,7 @@
 const { Prefix } = require('../dbObjects');
 
 module.exports = {
-    name: 'rep_prefix',
+    name: 'claim_prefix',
     args: true,
     admin: true,
     usage: '<prefix>',
@@ -52,7 +52,7 @@ module.exports = {
                     message.reply('Entry already exists.');
                     return 100;
                 }
-                message.reply('Something went wrong with adding reputation.');
+                message.reply('Something went wrong changing the prefix.');
                 return 100;
             }
 
