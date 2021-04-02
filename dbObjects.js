@@ -7,9 +7,8 @@ const sequelize = new Sequelize('database', 'username', 'password', {
     storage: 'database.sqlite',
 });
 
-const Reputation = sequelize.import('models/Reputation');
-const RepThresholdSettings = sequelize.import('models/RepThresholdSettings');
-const RepCooldowns = sequelize.import('models/RepCooldowns.js');
+const Reputation = sequelize.import('models/Channel');
+const RepThresholdSettings = sequelize.import('models/ClaimSettings');
 const Prefix = sequelize.import('models/Prefix.js');
 
-module.exports = { Reputation, RepThresholdSettings, RepCooldowns, Prefix };
+module.exports = { Channel, ClaimSettings, Prefix };
