@@ -12,12 +12,20 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
+        prefix: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        suffix: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         current_owner_id: {
             type: DataTypes.BIGINT,
             allowNull: true
         },
         claimed_at: {
-            type: DataTypes.DATE,
+            type: DataTypes.STRING,
             allowNull: false
         },
     })
