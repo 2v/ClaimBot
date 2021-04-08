@@ -8,13 +8,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false
         },
-        user_id: {
-            type: DataTypes.BIGINT,
+        claimable: {
+            type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        user_name: {
-            type: DataTypes.STRING,
-            allowNull: false
+        current_owner_id: {
+            type: DataTypes.BIGINT,
+            allowNull: true
         },
         claimed_at: {
             type: DataTypes.DATE,
