@@ -7,6 +7,14 @@ module.exports = (sequelize, DataTypes) => {
         claim_duration: {
             type: DataTypes.BIGINT,
             allowNull: false
+        },
+        prefix: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        suffix: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     }, {
         timestamps: false,

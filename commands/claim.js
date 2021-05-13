@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const { Channel } = require('../dbObjects');
-const { ClaimSettings } = require("../dbObjects');
+const { ClaimSettings } = require('../dbObjects');
 const { formatSeconds } = require('../util');
 const { Op } = require("sequelize");
 
@@ -14,17 +14,19 @@ module.exports = {
         guildOnly: true,
         async execute(message, args) {
             let guild = message.guild;
-
             let channel = message.channel;
-
             let author = message.author;
+            let c_prefix;
+            let c_suffix;
 
             // first check if the channel can be claimed. If not exit command and display time until channel can be claimed
             await Channel.findAll({
                 attributes: [
                     'claimable',
                     'current_owner_id',
-                    'claimed_at'
+                    'claimed_at',
+                    'prefix',
+                    'suffix'
                 ],
                 where: {
                     [Op.and]: [
@@ -43,6 +45,10 @@ module.exports = {
                     console.log("Channel is explicitly defined to be not claimable, exiting");
                     return;
                 }
+
+                c_prefix = guildData.prefix;
+                c_suffix = guildData.suffix;
+
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
                 return 100;
@@ -50,4 +56,29 @@ module.exports = {
             });
 
             // next, channel can be claimed so put new info to database and change channel name. Display an embed with new channel details and claim time.
+
+            console.log("claiming channel");
+
+            var today = new Date();
+            var current_time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+            try {
+                const channel = await Channel.create({
+                    guild_id: guild.id,
+                    channel_id: channel.id,
+                    claimable: true,
+                    current_owner_id: author.id,
+                    claimed_at: current_time,
+                    prefix: c_prefix,
+                    suffix: c_suffix
+                });
+                message.channel.setName(`${prefix}${author.tag}${suffix}`);
+                message.reply(`${author.tag} has successfully claimed the channel.`);
+                return 200;
+            }
+            catch(e) {
+                message.reply('Something went wrong with accessing database.');
+                return 100;
+            }
         }
+}

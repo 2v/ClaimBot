@@ -9,7 +9,16 @@
   "author": "Thomas Buckley",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.1",
-    "sequelize": "^6.6.2"
-  }
+    "discord.js": "^12.5.3",
+    "sequelize": "^6.6.2",
+    "sqlite3": "^5.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2v/ClaimBot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/2v/ClaimBot/issues"
+  },
+  "homepage": "https://github.com/2v/ClaimBot#readme"
 }

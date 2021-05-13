@@ -1,4 +1,9 @@
 const Sequelize = require('sequelize');
+/*
+ * DO NOT RUN THIS WITHOUT A DB BACKUP,
+ * SHOULD ONLY BE RUN ONCE WHEN FIRST
+ * SPAWNING THE BOT
+ */
 
 const sequelize = new Sequelize('database', 'username', 'password', {
     host: 'localhost',
@@ -7,21 +12,19 @@ const sequelize = new Sequelize('database', 'username', 'password', {
     storage: 'database.sqlite',
 });
 
-const Reputation = sequelize.import('models/Reputation.js');
-const ReputationThresholdSettings = sequelize.import('models/RepThresholdSettings.js');
-const RepCooldowns = sequelize.import('models/RepCooldowns.js');
-const Prefix = sequelize.import('models/Prefix.js');
+const Channel = require('./models/Channel.js')(sequelize, Sequelize.DataTypes);
+const ClaimSettings = require('./models/ClaimSettings.js')(sequelize, Sequelize.DataTypes);
+const Prefix = require('./models/Prefix.js')(sequelize, Sequelize.DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 
 sequelize.sync({ force }).then(async () => {
-    const rep = [
-        Reputation.upsert({ rep_id:0, guild_id:0, user_id:0, user_name:"test", rep_given_by: "test", rep_given_by_id: "0", rep_positive: true, description: "test" }),
-        ReputationThresholdSettings.upsert({ guild_id:0, trader_threshold: 5, reputable_threshold: 15, trusted_threshold: 25 }),
-        RepCooldowns.upsert({ guild_id: 0, default_cooldown: 36000, trader_cooldown: 36000, reputable_cooldown: 14400, trusted_cooldown: 600}),
+    const claim_init = [
+        Channel.upsert({ guild_id:0, channel_id:0, claimable:false, current_owner_id:0, claimed_at:"NOT_A_REAL_DATE"}),
+        ClaimSettings.upsert({ guild_id:0, claim_duration: 0, prefix: null, suffix: null }),
         Prefix.upsert({ guild_id:0, prefix: '!' })
     ];
-    await Promise.all(rep);
+    await Promise.all(claim_init);
     console.log('Database synced');
     sequelize.close();
 }).catch(console.error);
