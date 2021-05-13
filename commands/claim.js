@@ -17,16 +17,40 @@ module.exports = {
             let channel = message.channel;
             let author = message.author;
             let today = new Date();
-            let current_time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            let current_time = [today.getHours(), today.getMinutes(), today.getSeconds()];
+            let current_time_str = null;
             let claimable = false;
+            let claim_duration = 24;
+            let suffix = "";
+            let prefix = "";
 
 
-            // first get basic info about guild, such as the global claim time, prefix, suffix
+            const db_settings = await ClaimSettings.findAll({
+                attributes: [
+                    'claim_duration',
+                    'prefix',
+                    'suffix',
+                ],
+                where: {
+                    guild_id : guild.id
+                }
+            }).then(setting => {
+                if(!setting.length) {
+                    // no custom settings so we will use default
+                    return;
+                }
 
+                claim_duration = setting.claim_duration;
+                suffix = setting.suffix;
+                prefix = setting.prefix;
 
+            }, reason => {
+                message.reply('There was a problem querying the Claimbot database, please try again later.');
+                return 100;
+                // rejection
+            });
 
-            // check if the channel can be claimed. If not exit command and display time until channel can be claimed
-            const result = await Channel.findAll({
+            const db_channel = await Channel.findAll({
                 attributes: [
                     'claimable',
                     'current_owner_id',
@@ -41,27 +65,32 @@ module.exports = {
             }).then(guildData => {
                 if(!guildData.length) {
                     message.reply("this channel has not been defined as claimable yet!");
-                    return;
+                    return 100;
                 }
 
                 if(!guildData[0].claimable) {
                     message.reply("this channel is explicitly defined to be not claimable, exiting.");
-                    return;
+                    return 100;
                 }
 
-               // TODO: add logic to check now if the channel can be claimed by users other than the current owner
+                let split_claimed_at = claimed_at.split(':');
+                let delta = (current_time[0]*3600 + current_time[1]*60 + current_time[2]) - (split_claimed_at[0]*3600 + split_claimed_at[1]*60+split_claimed_at[0]) - claim_duration * 3600;
+                if (delta >= 0) {
+                    claimable = true;
+                    current_time_str = current_time[0] + ':' + current_time[1] + ':' + current_time[0];
+                } else {
+                    message.reply('This channel is not claimable for' + formatSeconds(-delta));
+                    return 100;
+                }
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
                 return 100;
-                // rejection
             });
-
-            // next, channel can be claimed so put new info to database and change channel name. Display an embed with new channel details and claim time.
 
 
             if(claimable) {
-            const result2 = await Channel.create({
+            const db_channel_write = await Channel.create({
                     guild_id: guild.id,
                     channel_id: channel.id,
                     claimable: true,
@@ -70,15 +99,13 @@ module.exports = {
             }).then(channel => {
 
                 console.log("claiming channel");
-                message.channel.setName(`different-name-than-what-the-name-was-before`);
+                message.channel.setName(`${prefix}${author.tag}${suffix}`);
                 message.reply(`has successfully claimed the channel.`);
                 return 200;
              }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later. 2');
                 return 100;
-                // rejection
             });
-            }
-
-            }
         }
+    }
+}
