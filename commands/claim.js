@@ -16,17 +16,21 @@ module.exports = {
             let guild = message.guild;
             let channel = message.channel;
             let author = message.author;
-            let c_prefix;
-            let c_suffix;
+            let today = new Date();
+            let current_time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            let claimable = false;
 
-            // first check if the channel can be claimed. If not exit command and display time until channel can be claimed
-            await Channel.findAll({
+
+            // first get basic info about guild, such as the global claim time, prefix, suffix
+
+
+
+            // check if the channel can be claimed. If not exit command and display time until channel can be claimed
+            const result = await Channel.findAll({
                 attributes: [
                     'claimable',
                     'current_owner_id',
                     'claimed_at',
-                    'prefix',
-                    'suffix'
                 ],
                 where: {
                     [Op.and]: [
@@ -36,18 +40,16 @@ module.exports = {
                 }
             }).then(guildData => {
                 if(!guildData.length) {
-                    console.log("channel not claimable or failed to access database");
+                    message.reply("this channel has not been defined as claimable yet!");
                     return;
                 }
 
-                // in the future, add a message describing who currently owns the channel, and how long until the channel will become claimable again
                 if(!guildData[0].claimable) {
-                    console.log("Channel is explicitly defined to be not claimable, exiting");
+                    message.reply("this channel is explicitly defined to be not claimable, exiting.");
                     return;
                 }
 
-                c_prefix = guildData.prefix;
-                c_suffix = guildData.suffix;
+               // TODO: add logic to check now if the channel can be claimed by users other than the current owner
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
@@ -57,28 +59,26 @@ module.exports = {
 
             // next, channel can be claimed so put new info to database and change channel name. Display an embed with new channel details and claim time.
 
-            console.log("claiming channel");
 
-            var today = new Date();
-            var current_time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-
-            try {
-                const channel = await Channel.create({
+            if(claimable) {
+            const result2 = await Channel.create({
                     guild_id: guild.id,
                     channel_id: channel.id,
                     claimable: true,
                     current_owner_id: author.id,
-                    claimed_at: current_time,
-                    prefix: c_prefix,
-                    suffix: c_suffix
-                });
-                message.channel.setName(`${prefix}${author.tag}${suffix}`);
-                message.reply(`${author.tag} has successfully claimed the channel.`);
+                    claimed_at: current_time
+            }).then(channel => {
+
+                console.log("claiming channel");
+                message.channel.setName(`different-name-than-what-the-name-was-before`);
+                message.reply(`has successfully claimed the channel.`);
                 return 200;
-            }
-            catch(e) {
-                message.reply('Something went wrong with accessing database.');
+             }, reason => {
+                message.reply('There was a problem querying the Claimbot database, please try again later. 2');
                 return 100;
+                // rejection
+            });
+            }
+
             }
         }
-}
