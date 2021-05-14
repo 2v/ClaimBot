@@ -32,17 +32,21 @@ module.exports = {
                     'suffix',
                 ],
                 where: {
-                    guild_id : guild.id
+                    guild_id : guild.id.toString()
                 }
             }).then(setting => {
                 if(!setting.length) {
                     // no custom settings so we will use default
+                    console.log("nothing found");
+                    console.log(guild.id);
                     return;
                 }
 
-                claim_duration = setting.claim_duration;
-                suffix = setting.suffix;
-                prefix = setting.prefix;
+                claim_duration = setting[0].claim_duration;
+                suffix = setting[0].suffix;
+                prefix = setting[0].prefix;
+
+                console.log('Found an entry: claim_duration: ' + claim_duration + ', suffix: ' + suffix + ', prefix: ' + prefix + '.');
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
@@ -58,8 +62,8 @@ module.exports = {
                 ],
                 where: {
                     [Op.and]: [
-                        { guild_id : guild.id },
-                        { channel_id : channel.id }
+                        { guild_id : guild.id.toString() },
+                        { channel_id : channel.id.toString() }
                     ]
                 }
             }).then(guildData => {
@@ -73,7 +77,7 @@ module.exports = {
                     return 100;
                 }
 
-                let split_claimed_at = claimed_at.split(':');
+                let split_claimed_at = guildData[0].claimed_at.split(':');
                 let delta = (current_time[0]*3600 + current_time[1]*60 + current_time[2]) - (split_claimed_at[0]*3600 + split_claimed_at[1]*60+split_claimed_at[0]) - claim_duration * 3600;
                 if (delta >= 0) {
                     claimable = true;
@@ -83,29 +87,19 @@ module.exports = {
                     return 100;
                 }
 
-            }, reason => {
-                message.reply('There was a problem querying the Claimbot database, please try again later.');
-                return 100;
-            });
-
-
-            if(claimable) {
-            const db_channel_write = await Channel.create({
-                    guild_id: guild.id,
-                    channel_id: channel.id,
-                    claimable: true,
-                    current_owner_id: author.id,
+                guildData.update({
+                    current_owner_id: author.id.toString(),
                     claimed_at: current_time
-            }).then(channel => {
+                })
 
                 console.log("claiming channel");
                 message.channel.setName(`${prefix}${author.tag}${suffix}`);
                 message.reply(`has successfully claimed the channel.`);
+
                 return 200;
-             }, reason => {
-                message.reply('There was a problem querying the Claimbot database, please try again later. 2');
+            }, reason => {
+                message.reply('There was a problem querying the Claimbot database, please try again later.');
                 return 100;
             });
         }
     }
-}

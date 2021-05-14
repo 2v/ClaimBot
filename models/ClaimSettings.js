@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('claimsettings', {
         guild_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.STRING,
             allowNull: false
         },
         claim_duration: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.FLOAT,
             allowNull: false
         },
         prefix: {

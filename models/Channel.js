@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('channel', {
         guild_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.STRING,
             allowNull: false
         },
         channel_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.STRING,
             allowNull: false
         },
         claimable: {
@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         current_owner_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.STRING,
             allowNull: true
         },
         claimed_at: {
