@@ -25,7 +25,7 @@ module.exports = {
             let prefix = "";
 
 
-            const db_settings = await ClaimSettings.findAll({
+            await ClaimSettings.findAll({
                 attributes: [
                     'claim_duration',
                     'prefix',
@@ -37,8 +37,6 @@ module.exports = {
             }).then(setting => {
                 if(!setting.length) {
                     // no custom settings so we will use default
-                    console.log("nothing found");
-                    console.log(guild.id);
                     return;
                 }
 
@@ -54,7 +52,7 @@ module.exports = {
                 // rejection
             });
 
-            const db_channel = await Channel.findAll({
+            await Channel.findAll({
                 attributes: [
                     'claimable',
                     'current_owner_id',
@@ -77,29 +75,45 @@ module.exports = {
                     return 100;
                 }
 
-                let split_claimed_at = guildData[0].claimed_at.split(':');
-                let delta = (current_time[0]*3600 + current_time[1]*60 + current_time[2]) - (split_claimed_at[0]*3600 + split_claimed_at[1]*60+split_claimed_at[0]) - claim_duration * 3600;
+                let delta = today.getTime() - Date.parse(guildData[0].claimed_at) - claim_duration * 3600 * 1000;
+
                 if (delta >= 0) {
                     claimable = true;
                     current_time_str = current_time[0] + ':' + current_time[1] + ':' + current_time[0];
                 } else {
-                    message.reply('This channel is not claimable for' + formatSeconds(-delta));
+                    message.reply('This channel is not claimable for' + formatSeconds(-delta/1000));
                     return 100;
                 }
 
-                guildData.update({
-                    current_owner_id: author.id.toString(),
-                    claimed_at: current_time
-                })
-
-                console.log("claiming channel");
-                message.channel.setName(`${prefix}${author.tag}${suffix}`);
-                message.reply(`has successfully claimed the channel.`);
-
-                return 200;
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
                 return 100;
             });
+
+
+            if (claimable) {
+                await Channel.update({
+                    current_owner_id: author.id.toString(),
+                    claimed_at: today.toString()
+                }, {
+                    where: {
+                        [Op.and]: [
+                            { guild_id : guild.id.toString() },
+                            { channel_id : channel.id.toString() }
+                        ]
+                    }
+                }).then(data=> {
+                    if(!data.length) {
+                        message.reply("could not access database");
+                        return 100;
+                    }
+
+                    message.channel.setName(`${prefix}${author.tag}${suffix}`);
+                    message.reply(`has successfully claimed the channel.`);
+                }, reason => {
+                    message.reply('There was a problem querying the Claimbot database, please try again later.');
+                    return 100;
+                });
+            }
         }
     }
