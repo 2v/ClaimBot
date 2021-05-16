@@ -75,7 +75,10 @@ module.exports = {
                     return 100;
                 }
 
-                let delta = today.getTime() - Date.parse(guildData[0].claimed_at) - claim_duration * 3600 * 1000;
+                let delta = 0;
+                if (!(guildData[0].claimed_at == null)) {
+                    delta = today.getTime() - Date.parse(guildData[0].claimed_at) - claim_duration * 3600 * 1000;
+                }
 
                 if (delta >= 0) {
                     claimable = true;
