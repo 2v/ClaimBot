@@ -19,6 +19,8 @@ module.exports = (sequelize, DataTypes) => {
         claimed_at: {
             type: DataTypes.STRING,
             allowNull: true
-        },
+        }
+    }, {
+        timestamps: false,
     })
 };
