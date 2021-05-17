@@ -25,6 +25,8 @@ module.exports = {
             let prefix = "";
 
 
+            console.log(`Author ID: ${author.id}`);
+            console.log(`Channel ID: ${channel.id}`);
             await ClaimSettings.findAll({
                 attributes: [
                     'claim_duration',
@@ -110,13 +112,19 @@ module.exports = {
                         message.reply("could not access database");
                         return 100;
                     }
-
-                    message.channel.setName(`${prefix}${author.tag}${suffix}`);
                     message.reply(`has successfully claimed the channel.`);
                 }, reason => {
                     message.reply('There was a problem querying the Claimbot database, please try again later.');
                     return 100;
                 });
+
+                try {
+                    await channel.setName(`${prefix}${author.username}${suffix}`)
+                        .then(newChannel => console.log(`Channel's new name is ${newChannel.name}`))
+                        .catch(console.error);
+                } catch(e) {
+                    console.log(e);
+                }
             }
         }
     }
