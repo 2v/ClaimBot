@@ -32,7 +32,6 @@ module.exports = {
             }
         }).then(guildData => {
             if(guildData.length) {
-                console.log("len: " + guildData.length);
                 exists = true;
                 if(guildData[0].claimable) {
                     claimable = true;
@@ -63,6 +62,8 @@ module.exports = {
                     message.reply("could not access database");
                     return 100;
                 }
+
+                message.reply('Channel is now claimable!');
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
