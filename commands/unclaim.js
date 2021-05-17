@@ -66,6 +66,7 @@ module.exports = {
                         return 100;
                     }
 
+                    // TODO: add funtionality so that channel is only claimable during last ten minutes of claim to prevent API rate limiting
                     message.reply(`has successfully un-claimed the channel.`);
                 }, reason => {
                     message.reply('There was a problem querying the Claimbot database, please try again later.');

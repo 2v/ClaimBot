@@ -25,8 +25,6 @@ module.exports = {
             let prefix = "";
 
 
-            console.log(`Author ID: ${author.id}`);
-            console.log(`Channel ID: ${channel.id}`);
             await ClaimSettings.findAll({
                 attributes: [
                     'claim_duration',
