@@ -62,6 +62,7 @@ module.exports = {
                     return 100;
                 }
                 message.reply('Channel is now non-claimable!');
+                return 200;
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');

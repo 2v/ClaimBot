@@ -64,6 +64,7 @@ module.exports = {
                 }
 
                 message.reply('Channel is now claimable!');
+                return 200;
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
