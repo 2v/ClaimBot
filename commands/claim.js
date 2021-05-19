@@ -44,7 +44,7 @@ module.exports = {
                 suffix = setting[0].suffix;
                 prefix = setting[0].prefix;
 
-                console.log('Found an entry: claim_duration: ' + claim_duration + ', suffix: ' + suffix + ', prefix: ' + prefix + '.');
+                // console.log('Found an entry: claim_duration: ' + claim_duration + ', suffix: ' + suffix + ', prefix: ' + prefix + '.');
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');

@@ -5,7 +5,7 @@ module.exports = {
     args: true,
     admin: true,
     usage: '<prefix>',
-    description: 'Set the desired server prefix to use for SimpleRep. The default prefix is \`!\`',
+    description: 'Set the desired server prefix to use for ClaimBot. The default prefix is \`!\`',
     guildOnly: true,
     async execute(message, args) {
         let formatted_prefix = String(args[0]);
@@ -32,7 +32,7 @@ module.exports = {
             return 100;
         }
 
-        const prefix_entry = await Prefix.findOne({ where: { guild_id: message.guild.id } });
+        const prefix_entry = await Prefix.findOne({ where: { guild_id: message.guild.id.toString() } });
 
         if(prefix_entry) {
             await prefix_entry.update({ prefix: formatted_prefix });
