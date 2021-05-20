@@ -7,7 +7,7 @@ module.exports = {
     cooldown: 3,
     variable_cooldown: false,
     admin_cooldown: 3,
-    aliases: ['c_set'],
+    aliases: ['c_set', 'set_claimable', 'set_channel_claimable', 'channel_set_claimable'],
     admin: true,
     args: false,
     usage: '',
