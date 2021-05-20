@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const { Channel } = require('../dbObjects');
 const { ClaimSettings } = require('../dbObjects');
 const { formatSeconds } = require('../util');
+const { default_claim_duration } = require('../config.json');
 const { Op } = require("sequelize");
 
 module.exports = {
@@ -17,6 +18,33 @@ module.exports = {
             let channel = message.channel;
             let author = message.author;
             let valid = false;
+
+            let today = new Date();
+            let current_time = [today.getHours(), today.getMinutes(), today.getSeconds()];
+            let current_time_str = null;
+            let claim_duration = default_claim_duration;
+
+            await ClaimSettings.findAll({
+                attributes: [
+                    'claim_duration'
+                ],
+                where: {
+                    guild_id : guild.id.toString()
+                }
+            }).then(setting => {
+                if(!setting.length) {
+                    // no custom settings so we will use default
+                    return;
+                }
+
+                claim_duration = setting[0].claim_duration;
+
+            }, reason => {
+                message.reply('There was a problem querying the Claimbot database, please try again later.');
+                return 100;
+                // rejection
+            });
+
 
             await Channel.findAll({
                 attributes: [
@@ -44,6 +72,21 @@ module.exports = {
                 if(guildData[0].current_owner_id = message.author.toString()) {
                     valid = true;
                 }
+
+                let delta = 0;
+                if (!(guildData[0].claimed_at == null)) {
+                    delta = today.getTime() - Date.parse(guildData[0].claimed_at) - claim_duration * 3600 * 1000;
+                }
+
+                if (-(delta/1000)-((claim_duration) * 0.1 * 3600) > 0) { // 10 percent of total claim_duration
+                    message.reply(`This channel will become unclaimable in ${formatSeconds((-(delta/1000)-((claim_duration) * 0.1 * 3600)))}`);
+                    valid = false;
+                    return;
+                } else {
+                    return;
+                }
+
+
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
                 return 100;

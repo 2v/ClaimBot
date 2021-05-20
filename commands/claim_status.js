@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const { Channel } = require('../dbObjects');
 const { ClaimSettings } = require('../dbObjects');
 const { formatSeconds } = require('../util');
+const { default_claim_duration } = require('../config.json');
 const { Op } = require("sequelize");
 
 module.exports = {
@@ -23,7 +24,7 @@ module.exports = {
             let claimed = false;
             let claimed_at = null;
             let current_owner = null;
-            let claim_duration = 24; // TODO: make this a value in settings JSON
+            let claim_duration = default_claim_duration;
 
             let today = new Date();
             let current_time = [today.getHours(), today.getMinutes(), today.getSeconds()];

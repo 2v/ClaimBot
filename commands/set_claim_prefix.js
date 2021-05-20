@@ -3,6 +3,7 @@ const { Channel } = require('../dbObjects');
 const { ClaimSettings } = require('../dbObjects');
 const { formatSeconds } = require('../util');
 const { mysqlEscape } = require('../util');
+const { default_claim_duration } = require('../config.json');
 const { Op } = require("sequelize");
 
 module.exports = {
@@ -23,11 +24,10 @@ module.exports = {
         let old_prefix = null;
         let new_prefix = null;
 
-        let claim_duration = 24; // TODO: make this a value in settings JSON
+        let claim_duration = default_claim_duration;
 
         let exists = false;
 
-        //TODO: Add string filtering to prefix and suffix
         new_prefix = mysqlEscape(args[0]);
         if(new_prefix.length > 18) {
             message.reply('length of prefix cannot be greater than 18 characters');
