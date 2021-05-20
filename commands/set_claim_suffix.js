@@ -14,7 +14,7 @@ module.exports = {
     admin: true,
     args: true,
     usage: '<new_suffix_string>',
-    description: 'Sets the global suffix used when renaming claimed channels. By default, once a channel is claimed, the name is changed to /`<suffix><channel_owner_name><suffix>/`.',
+    description: 'Sets the global suffix used when renaming claimed channels. By default, once a channel is claimed, the name is changed to `<suffix><channel_owner_name><suffix>`.',
     guildOnly: true,
     async execute(message, args) {
         let guild = message.guild;

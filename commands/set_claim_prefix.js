@@ -15,7 +15,7 @@ module.exports = {
     admin: true,
     args: true,
     usage: '<new_prefix_string>',
-    description: 'Sets the global prefix used when renaming claimed channels. By default, once a channel is claimed, the name is changed to /`<prefix><channel_owner_name><suffix>/`.',
+    description: 'Sets the global prefix used when renaming claimed channels. By default, once a channel is claimed, the name is changed to `<prefix><channel_owner_name><suffix>`.',
     guildOnly: true,
     async execute(message, args) {
         let guild = message.guild;

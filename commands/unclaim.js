@@ -11,7 +11,7 @@ module.exports = {
         admin_cooldown: 3,
         args: false,
         usage: '',
-        description: 'Unclaim the current channel. Frees the channel up to be claimed by anyone.',
+        description: 'Unclaim the current channel. Frees the channel up to be claimed by anyone. *NOTE: Channels can only be unclaimed during the last 10% of the total time of the claim duration. For example, if your server has a claim duration of 1 hour, you will only be able to unclaim your channel during the last 6 minutes of your ownership, or after 54 minutes from the first `!claim` command.*',
         guildOnly: true,
         async execute(message, args) {
             let guild = message.guild;
