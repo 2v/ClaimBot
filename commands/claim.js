@@ -119,7 +119,6 @@ module.exports = {
 
                 try {
                     await channel.setName(`${prefix}${author.username}${suffix}`)
-                        .then(newChannel => console.log(`Channel's new name is ${newChannel.name}`))
                         .catch(console.error);
                 } catch(e) {
                     console.log(e);
