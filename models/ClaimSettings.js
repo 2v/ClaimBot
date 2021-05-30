@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: false
         },
+        unclaim_duration: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         prefix: {
             type: DataTypes.STRING,
             allowNull: true

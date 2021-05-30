@@ -69,8 +69,11 @@ module.exports = {
                     return 100;
                 }
 
-                if(guildData[0].current_owner_id = message.author.toString()) {
+                if(guildData[0].current_owner_id === message.author.id.toString()) {
                     valid = true;
+                } else {
+                    message.reply('You cannot unclaim a channel that you do not own');
+                    return;
                 }
 
                 let delta = 0;
