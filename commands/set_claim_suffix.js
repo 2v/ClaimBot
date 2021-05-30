@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const { Channel } = require('../dbObjects');
 const { ClaimSettings } = require('../dbObjects');
 const { formatSeconds } = require('../util');
+const { default_unclaim_duration } = require('../config.json');
+const { default_claim_duration } = require('../config.json');
 const { mysqlEscape } = require('../util');
 const { Op } = require("sequelize");
 
@@ -23,11 +25,11 @@ module.exports = {
         let old_suffix = null;
         let new_suffix = null;
 
-        let claim_duration = 24; // TODO: make this a value in settings JSON
+        let claim_duration = default_claim_duration;
+        let unclaim_duration = default_unclaim_duration;
 
         let exists = false;
 
-        //TODO: Add string filtering to suffix and suffix
         new_suffix = mysqlEscape(args[0]);
         if(new_suffix.length > 18) {
             message.reply('length of suffix cannot be greater than 18 characters');
@@ -73,6 +75,7 @@ module.exports = {
                 await ClaimSettings.create({
                     guild_id: guild.id.toString(),
                     claim_duration: claim_duration,
+                    unclaim_duration: unclaim_duration,
                     prefix: "",
                     suffix: new_suffix
                 });

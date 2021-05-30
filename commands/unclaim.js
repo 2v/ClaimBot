@@ -3,6 +3,7 @@ const { Channel } = require('../dbObjects');
 const { ClaimSettings } = require('../dbObjects');
 const { formatSeconds } = require('../util');
 const { default_claim_duration } = require('../config.json');
+const { default_unclaim_duration } = require('../config.json');
 const { Op } = require("sequelize");
 
 module.exports = {
@@ -22,11 +23,14 @@ module.exports = {
             let today = new Date();
             let current_time = [today.getHours(), today.getMinutes(), today.getSeconds()];
             let current_time_str = null;
+
             let claim_duration = default_claim_duration;
+            let unclaim_duration = default_unclaim_duration / 100;
 
             await ClaimSettings.findAll({
                 attributes: [
-                    'claim_duration'
+                    'claim_duration',
+                    'unclaim_duration'
                 ],
                 where: {
                     guild_id : guild.id.toString()
@@ -38,6 +42,7 @@ module.exports = {
                 }
 
                 claim_duration = setting[0].claim_duration;
+                unclaim_duration = setting[0].unclaim_duration / 100;
 
             }, reason => {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
@@ -81,8 +86,8 @@ module.exports = {
                     delta = today.getTime() - Date.parse(guildData[0].claimed_at) - claim_duration * 3600 * 1000;
                 }
 
-                if (-(delta/1000)-((claim_duration) * 0.1 * 3600) > 0) { // 10 percent of total claim_duration
-                    message.reply(`This channel will become unclaimable in ${formatSeconds((-(delta/1000)-((claim_duration) * 0.1 * 3600)))}`);
+                if (-(delta/1000)-((claim_duration) * unclaim_duration * 3600) > 0) {
+                    message.reply(`This channel will become unclaimable in ${formatSeconds((-(delta/1000)-((claim_duration) * unclaim_duration * 3600)))}`);
                     valid = false;
                     return;
                 } else {
@@ -112,7 +117,6 @@ module.exports = {
                         return 100;
                     }
 
-                    // TODO: add funtionality so that channel is only claimable during last ten minutes of claim to prevent API rate limiting
                     message.reply(`has successfully un-claimed the channel.`);
                 }, reason => {
                     message.reply('There was a problem querying the Claimbot database, please try again later.');

@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         unclaim_duration: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: false
         },
         prefix: {
             type: DataTypes.STRING,

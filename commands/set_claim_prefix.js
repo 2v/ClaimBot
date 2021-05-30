@@ -4,6 +4,7 @@ const { ClaimSettings } = require('../dbObjects');
 const { formatSeconds } = require('../util');
 const { mysqlEscape } = require('../util');
 const { default_claim_duration } = require('../config.json');
+const { default_unclaim_duration } = require('../config.json');
 const { Op } = require("sequelize");
 
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
         let old_prefix = null;
         let new_prefix = null;
 
+        let unclaim_duration = default_unclaim_duration;
         let claim_duration = default_claim_duration;
 
         let exists = false;
@@ -73,6 +75,7 @@ module.exports = {
                 await ClaimSettings.create({
                     guild_id: guild.id.toString(),
                     claim_duration: claim_duration,
+                    unclaim_duration: unclaim_duration,
                     prefix: new_prefix,
                     suffix: ""
                 });
