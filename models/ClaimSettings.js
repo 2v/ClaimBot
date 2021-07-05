@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        unique_claiming: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false
+        },
         prefix: {
             type: DataTypes.STRING,
             allowNull: true

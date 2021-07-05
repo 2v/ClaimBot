@@ -22,6 +22,8 @@ module.exports = {
             let current_time_str = null;
             let claimable = false;
             let claim_duration = default_claim_duration;
+            let unique_claiming = false;
+            let unique_constraint = true;
             let suffix = "";
             let prefix = "";
 
@@ -29,6 +31,7 @@ module.exports = {
             await ClaimSettings.findAll({
                 attributes: [
                     'claim_duration',
+                    'unique_claiming',
                     'prefix',
                     'suffix',
                 ],
@@ -42,6 +45,7 @@ module.exports = {
                 }
 
                 claim_duration = setting[0].claim_duration;
+                unique_claiming = setting[0].unique_claiming;
                 suffix = setting[0].suffix;
                 prefix = setting[0].prefix;
 
@@ -52,6 +56,28 @@ module.exports = {
                 return 100;
                 // rejection
             });
+
+            if(unique_claiming) {
+                await Channel.findAll({
+                    attributes: [
+                        'claimed_at',
+                    ],
+                    where: {
+                        [Op.and]: [
+                            { guild_id : guild.id.toString() },
+                            { current_owner_id : author.id }
+                        ]
+                    }
+                }).then(guildData => {
+                    if(guildData.length > 0) {
+                        unique_constraint = false;
+                        return 100;
+                    }
+                }, reason => {
+                    message.reply('There was a problem querying the Claimbot database, please try again later.');
+                    return 100;
+                });
+            }
 
             await Channel.findAll({
                 attributes: [
@@ -75,6 +101,10 @@ module.exports = {
                     message.reply("this channel is explicitly defined to be not claimable, exiting.");
                     return 100;
                 }
+                if(!unique_constraint) {
+                    message.reply('you cannot claim this channel because you have already claimed another channel!')
+                    return 100;
+                }
 
                 let delta = 0;
                 if (!(guildData[0].claimed_at == null)) {
@@ -93,8 +123,7 @@ module.exports = {
                 message.reply('There was a problem querying the Claimbot database, please try again later.');
                 return 100;
             });
-
-
+            
             if (claimable) {
                 await Channel.update({
                     current_owner_id: author.id.toString(),
